@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Adires Restaurant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(to right, #fceabb, #f8b500);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background-color: #8B0000;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .menu-section {
+      margin-top: 30px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .menu-section h2, .menu-section h3 {
+      margin-top: 0;
+    }
+
+    button {
+      background-color: #ff5722;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      margin: 5px;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e64a19;
+    }
+
+    #total {
+      font-weight: bold;
+      font-size: 1.4em;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 15px;
+      background-color: #333;
+      color: white;
+    }
+
+    .order-item {
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+
+    .remove-btn {
+      background-color: crimson;
+      margin-left: 10px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🍽️ Welcome to Adires Restaurant!</h1>
+</header>
+
+<div class="container">
+
+  <div class="menu-section">
+    <h2>Main Menu</h2>
+    <button onclick="selectCategory('pizza')">🍕 Pizza</button>
+    <button onclick="selectCategory('burger')">🍔 Burger</button>
+    <button onclick="selectCategory('chicken')">🍗 Chicken Bucket</button>
+    <button onclick="selectCategory('drinks')">🥤 Drinks</button>
+    <button onclick="selectCategory('sauces')">🧂 Sauces</button>
+    <button onclick="selectCategory('iceCreamSundae')">🍨 Ice Cream Sundae</button>
+    <button onclick="selectCategory('noodles')">🍜 Noodles</button>
+    <button onclick="selectCategory('iceCream')">🍦 Ice Cream</button>
+    <button onclick="selectCategory('hotdog')">🌭 Hotdogs</button>
+  </div>
+
+  <div id="submenu" class="menu-section"></div>
+
+  <div class="menu-section">
+    <h2>🛒 Your Order</h2>
+    <div id="order-list"></div>
+  </div>
+
+  <div class="menu-section">
+    <h2>Total: $<span id="total">0.00</span></h2>
+    <button onclick="checkout()">💳 Checkout</button>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 Adires Restaurant | Designed with ❤️
+</footer>
+
+<script>
+  let selectedItems = {};
+
+  const menuItems = {
+    pizza: [
+      { name: "Cheese Pizza", price: 2.49 },
+      { name: "Pepperoni Pizza", price: 3.49 },
+      { name: "Mushroom Pizza", price: 2.99 }
+    ],
+    burger: [
+      { name: "Cheese Burger", price: 2.49 },
+      { name: "Chicken Burger", price: 1.99 },
+      { name: "Big Mac", price: 7.99 }
+    ],
+    chicken: [
+      { name: "Cheesey Chicken Bucket", price: 2.49 },
+      { name: "Spicy Chicken Bucket", price: 3.49 },
+      { name: "Normal Chicken Bucket", price: 2.99 }
+    ],
+    drinks: [
+      { name: "Coca-Cola", price: 2.99 },
+      { name: "Water", price: 0.99 },
+      { name: "Milkshake", price: 1.99 },
+      { name: "Tea", price: 1.49 },
+      { name: "Coffee", price: 1.49 }
+    ],
+    sauces: [
+      { name: "Mayo", price: 0.99 },
+      { name: "Ranch", price: 0.99 }
+    ],
+    iceCreamSundae: [
+      { name: "Oreo Sundae", price: 3.99 },
+      { name: "Strawberry Sundae", price: 2.99 },
+      { name: "Fruit Punch Sundae", price: 3.49 }
+    ],
+    noodles: [
+      { name: "Ramen", price: 2.49 },
+      { name: "Maggi", price: 1.99 },
+      { name: "Spicy Noodles", price: 2.99 }
+    ],
+    iceCream: [
+      { name: "Vanilla", price: 1.99 },
+      { name: "Chocolate", price: 2.49 },
+      { name: "Strawberry", price: 2.99 },
+      { name: "Mango", price: 3.49 }
+    ],
+    hotdog: [
+      { name: "Classic Hotdog", price: 2.99 },
+      { name: "Cheese Hotdog", price: 3.49 },
+      { name: "Spicy Hotdog", price: 3.99 },
+      { name: "Bacon Wrapped Hotdog", price: 4.49 }
+    ]
+  };
+
+  function selectCategory(category) {
+    const submenu = document.getElementById("submenu");
+    submenu.innerHTML = `<h3>${category.charAt(0).toUpperCase() + category.slice(1)} Menu</h3>`;
+    menuItems[category].forEach(item => {
+      const btn = document.createElement("button");
+      btn.textContent = `${item.name} - $${item.price.toFixed(2)}`;
+      btn.onclick = () => addToOrder(item);
+      submenu.appendChild(btn);
+    });
+  }
+
+  function addToOrder(item) {
+    if (selectedItems[item.name]) {
+      selectedItems[item.name].quantity++;
+    } else {
+      selectedItems[item.name] = { price: item.price, quantity: 1 };
+    }
+    updateDisplay();
+  }
+
+  function removeItem(name) {
+    if (selectedItems[name]) {
+      selectedItems[name].quantity--;
+      if (selectedItems[name].quantity <= 0) {
+        delete selectedItems[name];
+      }
+    }
+    updateDisplay();
+  }
+
+  function updateDisplay() {
+    const orderList = document.getElementById("order-list");
+    orderList.innerHTML = "";
+
+    let total = 0;
+
+    for (let name in selectedItems) {
+      const item = selectedItems[name];
+      const itemTotal = item.price * item.quantity;
+      total += itemTotal;
+
+      const div = document.createElement("div");
+      div.className = "order-item";
+      div.innerHTML = `${name} x${item.quantity} - $${itemTotal.toFixed(2)}
+        <button class="remove-btn" onclick="removeItem('${name}')">🗑️ Remove</button>`;
+      orderList.appendChild(div);
+    }
+
+    document.getElementById("total").textContent = total.toFixed(2);
+  }
+
+  function checkout() {
+    const total = parseFloat(document.getElementById("total").textContent);
+    if (total === 0) {
+      alert("You haven't selected anything!");
+      return;
+    }
+
+    let tip = prompt("Do you want to add a tip? Enter percentage (e.g., 10 for 10%) or leave blank:");
+    let tipAmount = 0;
+    if (tip && !isNaN(parseFloat(tip))) {
+      tipAmount = (parseFloat(tip) / 100) * total;
+    }
+
+    const finalTotal = total + tipAmount;
+
+    // Replace content with thank you message and lock interaction
+    document.querySelector(".container").innerHTML = `
+      <div class="menu-section" style="text-align: center;">
+        <h2>🎉 Thank you for ordering!</h2>
+        <p><strong>Total:</strong> $${finalTotal.toFixed(2)}</p>
+        <p><strong>Tip:</strong> $${tipAmount.toFixed(2)}</p>
+        <p>Your order has been received. Have a great day!</p>
+      </div>
+    `;
+  }
+</script>
+
+</body>
+</html>
